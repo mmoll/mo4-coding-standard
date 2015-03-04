@@ -51,11 +51,11 @@ The MO4 Coding Standard is an extension of the [Symfony Coding Standard](http://
 
 ## Contributing
 
-If you contribute code to these sniffs, please make sure it conforms to the PEAR coding standard and that the unit tests still pass.
+If you contribute code to these sniffs, please make sure it conforms to the PHPCS coding standard and that the unit tests still pass.
 
 To check the coding standard, run from the Symfony-coding-standard source root:
 
-        phpcs --ignore=Tests --standard=PEAR . -n
+        phpcs --ignore=Tests --standard=PHPCS . -n
 
 The unit-tests are run from within the PHP_CodeSniffer directory
 
