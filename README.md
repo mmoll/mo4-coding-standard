@@ -2,6 +2,7 @@
  
 Provides a PHP CodeSniffer ruleset for the MO4 coding standard
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/a9eaa852261e4c45b78f860b83272d93)](https://www.codacy.com/app/mmoll/mo4-coding-standard?utm_source=github.com&utm_medium=referral&utm_content=mmoll/mo4-coding-standard&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/mayflower/mo4-coding-standard.svg?branch=master)](https://travis-ci.org/mayflower/mo4-coding-standard)
 [![Build Status](https://codecov.io/gh/mayflower/mo4-coding-standard/branch/master/graph/badge.svg)](https://codecov.io/gh/mayflower/mo4-coding-standard/branch/master/)
 [![Scrutinizer Quality Level](https://scrutinizer-ci.com/g/mayflower/mo4-coding-standard/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mayflower/mo4-coding-standard)
