@@ -23,13 +23,13 @@
     },
     "require-dev": {
         "phan/phan": "^3.1.0",
-        "phpstan/phpstan": "^0.12.33",
-        "phpstan/phpstan-strict-rules": "^0.12",
+        "phpstan/phpstan": "^0.12.58",
+        "phpstan/phpstan-strict-rules": "^0.12.4",
         "phpunit/phpunit": "^7.0",
-        "vimeo/psalm": "^3.8"
+        "vimeo/psalm": "^4.0"
     },
     "require": {
-        "php": "~7.2",
+        "php": "~7.2 || ~8.0",
         "dealerdirect/phpcodesniffer-composer-installer": "~0.7",
         "escapestudios/symfony2-coding-standard": "^3.10.0",
         "slevomat/coding-standard": "^6.2.0",
