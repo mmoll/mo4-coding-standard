@@ -1,5 +1,7 @@
 # MO4 CodeSniffer ruleset
 
+meh 
+
 Provides a PHP CodeSniffer ruleset for the MO4 coding standard
 
 [![Build Status](https://github.com/mayflower/mo4-coding-standard/actions/workflows/ci.yml/badge.svg)](https://github.com/mayflower/mo4-coding-standard/actions)
