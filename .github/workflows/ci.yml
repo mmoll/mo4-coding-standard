@@ -99,11 +99,6 @@ jobs:
       - name: Run phan
         run: vendor/bin/phan
 
-      - name: Coverage Report as Comment (Clover)
-        uses: lucassabreu/comment-coverage-clover@main
-        with:
-          file: coverage.xml
-
       - if: ${{ github.event_name == 'pull_request' }}
         name: Download artifact
         uses: dawidd6/action-download-artifact@v2.14.1
