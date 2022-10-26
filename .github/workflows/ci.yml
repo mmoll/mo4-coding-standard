@@ -120,11 +120,14 @@ jobs:
           name: coverage-report
           path: coverage.xml
 
-      - name: Coverage Report as Comment (Clover)
+      - if: ${{ github.event_name == 'pull_request' }}
+        name: Coverage Report as Comment (Clover)
         uses: lucassabreu/comment-coverage-clover@main
         with:
           file: coverage.xml
           base-file: tests/base/coverage.xml
+          max-line-coverage-decrease: 0
+          max-method-coverage-decrease: 0
 
 #      - name: Upload coverage to Codecov
 #        uses: codecov/codecov-action@v2
