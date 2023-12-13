@@ -40,10 +40,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php_version:
-          - 7.2
-          - 7.3
-          - 7.4
-          - 8.0
           - 8.1
           - 8.2
           - 8.3
@@ -82,11 +78,11 @@ jobs:
         run: composer update ${{ matrix.dependencies_level }} --prefer-dist --no-interaction --no-progress
       - name: Check composer.json
         run: composer normalize --dry-run
+      - name: Run tests
+        run: vendor/bin/phpunit
       - name: Run tests with coverage
         if: ${{ matrix.os != 'windows-latest' && matrix.php_version == '8.1' && matrix.dependencies_level != '--prefer-lowest' }}
         run: php vendor/bin/phpunit --coverage-clover=coverage.xml
-      - name: Run tests
-        run: vendor/bin/phpunit
       - name: Run integration tests
         run: vendor/bin/phpcs -s --standard=MO4 integrationtests/testfile.php
       - name: Run PHPStan
