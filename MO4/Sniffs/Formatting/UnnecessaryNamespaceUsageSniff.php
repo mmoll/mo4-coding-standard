@@ -376,6 +376,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
         if (true === $isDocBlock) {
             $tokens     = $phpcsFile->getTokens();
             $oldContent = $tokens[$startPtr]['content'];
+            /** @var string $newContent */
             $newContent = \str_replace($className, $replacement, $oldContent);
             $phpcsFile->fixer->replaceToken($startPtr, $newContent);
         } else {

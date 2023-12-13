@@ -301,6 +301,7 @@ class AlphabeticalUseStatementsSniff extends UseDeclarationSniff
 
             // Use $line for the first iteration.
             if (false !== $prevLine) {
+                /** @psalm-suppress NoValue */
                 $line = $prevLine;
             }
 
