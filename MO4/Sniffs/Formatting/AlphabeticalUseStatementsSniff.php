@@ -292,7 +292,8 @@ class AlphabeticalUseStatementsSniff extends UseDeclarationSniff
     {
         $tokens = $phpcsFile->getTokens();
 
-        $line     = $tokens[$stackPtr]['line'];
+        $line = $tokens[$stackPtr]['line'];
+        /** @var int|bool $prevLine */
         $prevLine = false;
         $prevPtr  = $stackPtr;
 
