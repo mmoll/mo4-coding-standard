@@ -36,14 +36,11 @@ class PregLibrary
      * @return array<string>|array<array>
      *
      * @throws RuntimeException
-     *
-     * @psalm-suppress ArgumentTypeCoercion
      */
     public static function MO4PregSplit(string $pattern, string $subject, int $limit = -1, int $flags = 0): array
     {
         $pregSplitResult = \preg_split($pattern, $subject, $limit, $flags);
 
-        // @phan-suppress-next-line PhanTypeComparisonToArray
         if (false === $pregSplitResult) {
             throw new RuntimeException('Unexpected Error in MO4 Coding Standard.');
         }

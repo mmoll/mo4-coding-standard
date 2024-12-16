@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="dev-master@765dcbfe43002e52e4808b65561842784fe7bcc7">
+  <file src="MO4/Sniffs/Formatting/AlphabeticalUseStatementsSniff.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[\substr($a, $min)]]></code>
+      <code><![CDATA[\substr($b, $min)]]></code>
+    </PossiblyFalseArgument>
+  </file>
+  <file src="MO4/Sniffs/Formatting/UnnecessaryNamespaceUsageSniff.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[$replacement]]></code>
+      <code><![CDATA[$replacement]]></code>
+    </PossiblyFalseArgument>
+  </file>
+  <file src="MO4/Sniffs/Strings/VariableInDoubleQuotedStringSniff.php">
+    <PossiblyFalseArgument>
+      <code><![CDATA[\substr($content, 0, $pos)]]></code>
+      <code><![CDATA[\substr($content, 0, $pos)]]></code>
+      <code><![CDATA[\substr($content, 0, $pos)]]></code>
+      <code><![CDATA[\substr($content, 0, $pos)]]></code>
+    </PossiblyFalseArgument>
+    <PossiblyFalseOperand>
+      <code><![CDATA[$after]]></code>
+      <code><![CDATA[$before]]></code>
+    </PossiblyFalseOperand>
+  </file>
+</files>
