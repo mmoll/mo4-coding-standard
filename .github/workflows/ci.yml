@@ -91,7 +91,7 @@ jobs:
         if: ${{ matrix.os != 'windows-latest' && !(matrix.dependencies_level == '--prefer-lowest' && matrix.php_version == '8.5') }}
         run: vendor/bin/psalm
       - name: Install and run phan
-        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' && matrix.php_version != '8.5' }}
         run: |
           rm composer.lock
           composer require ${{ matrix.dependencies_level }} --dev phan/phan:^5.4.5
