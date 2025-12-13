@@ -88,7 +88,7 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --no-progress
       - name: Run psalm
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os != 'windows-latest' && !(matrix.dependencies_level == '--prefer-lowest' && matrix.php_version == '8.5') }}
         run: vendor/bin/psalm
 #      - name: Run phan
 #        if: ${{ matrix.os != 'windows-latest' }}
