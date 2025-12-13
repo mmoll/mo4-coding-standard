@@ -91,14 +91,14 @@ jobs:
         if: ${{ matrix.os != 'windows-latest' && !(matrix.dependencies_level == '--prefer-lowest' && matrix.php_version == '8.5') }}
         run: vendor/bin/psalm
       - name: Install and run phan
-        if: ${{ matrix.os != 'windows-latest' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
         run: |
           rm composer.lock
           composer require ${{ matrix.dependencies_level }} --dev phan/phan:^5.4.5
           vendor/bin/phan
       # AST 1.1 binary for Windows seems to be missing on PECL
       - name: Install and run phan with polyfill
-        if: ${{ matrix.os == 'windows-latest' }}
+        if: ${{ matrix.os == 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
         run: |
           rm composer.lock
           composer require  ${{ matrix.dependencies_level }} --dev phan/phan:^5.4.5
