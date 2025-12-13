@@ -22,8 +22,7 @@ return [
     'directory_list' => [
         'MO4',
         'tests',
-        'vendor/squizlabs/php_codesniffer',
-        'vendor/symfony/polyfill-php83',
+        'vendor'
     ],
 
     // A directory list that defines files that will be excluded
