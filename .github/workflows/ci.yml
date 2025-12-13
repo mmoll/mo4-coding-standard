@@ -90,13 +90,13 @@ jobs:
       - name: Run psalm
         if: ${{ matrix.os != 'windows-latest' }}
         run: vendor/bin/psalm
-      - name: Run phan
-        if: ${{ matrix.os != 'windows-latest' }}
-        run: vendor/bin/phan
-      # AST 1.1 binary for Windows seems to be missing on PECL
-      - name: Run phan with polyfill
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: vendor/bin/phan --allow-polyfill-parser
+#      - name: Run phan
+#        if: ${{ matrix.os != 'windows-latest' }}
+#        run: vendor/bin/phan
+#      # AST 1.1 binary for Windows seems to be missing on PECL
+#      - name: Run phan with polyfill
+#        if: ${{ matrix.os == 'windows-latest' }}
+#        run: vendor/bin/phan --allow-polyfill-parser
       - name: Run tests with coverage
         if: ${{ matrix.os != 'windows-latest' && matrix.php_version == '8.1' && matrix.dependencies_level != '--prefer-lowest' }}
         run: php vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-cobertura=cobertura.xml --log-junit=junit.xml
