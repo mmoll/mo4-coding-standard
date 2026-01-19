@@ -23,7 +23,6 @@ return [
         'MO4',
         'tests',
         'vendor/squizlabs/php_codesniffer',
-        'vendor/symfony/polyfill-php83',
     ],
 
     // A directory list that defines files that will be excluded

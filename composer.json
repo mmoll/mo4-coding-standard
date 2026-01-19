@@ -31,7 +31,6 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.45",
-        "nikic/php-parser": "< 5.0.1",
         "phan/phan": "^6.0.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
@@ -39,7 +38,6 @@
         "psalm/plugin-phpunit": "^0.19",
         "sabre/event": ">= 5.1.6",
         "symfony/filesystem": ">= 5.4.45",
-        "symfony/polyfill-php83": "^1.32",
         "vimeo/psalm": "^6.0.0"
     },
     "config": {
