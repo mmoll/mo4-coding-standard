@@ -18,7 +18,7 @@ jobs:
       - name: Install PHP
         uses: shivammathur/setup-php@44454db4f0199b8b9685a5d763dc37cbf79108e1 # master
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           coverage: 'none'
       - name: Cache dependencies
         uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
@@ -41,7 +41,6 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         php_version:
-          - 8.1
           - 8.2
           - 8.3
           - 8.4
@@ -89,27 +88,27 @@ jobs:
       - name: Run psalm
         run: vendor/bin/psalm
       - name: Run phan
-        if: ${{ matrix.os != 'windows-latest' && matrix.php_version != '8.1' && matrix.php_version != '8.2' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.php_version != '8.2' }}
         run: vendor/bin/phan
       # AST 1.1 binary for Windows seems to be missing on PECL
       - name: Run phan with polyfill
-        if: ${{ matrix.os == 'windows-latest' && matrix.php_version != '8.1' && matrix.php_version != '8.2' }}
+        if: ${{ matrix.os == 'windows-latest' && matrix.php_version != '8.2' }}
         run: vendor/bin/phan --allow-polyfill-parser
       - name: Run tests with coverage
-        if: ${{ matrix.os != 'windows-latest' && matrix.php_version == '8.1' && matrix.dependencies_level != '--prefer-lowest' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
         run: php vendor/bin/phpunit --coverage-clover=coverage.xml --coverage-cobertura=cobertura.xml --log-junit=junit.xml
       - name: Upload coverage to Codecov
-        if: ${{ matrix.os != 'windows-latest' && matrix.php_version == '8.1' && matrix.dependencies_level != '--prefer-lowest' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
         uses: codecov/codecov-action@5a1091511ad55cbe89839c7260b706298ca349f7 # v5.5.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload test results to Codecov
-        if: ${{ matrix.os != 'windows-latest' && matrix.php_version == '8.1' && matrix.dependencies_level != '--prefer-lowest' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
         uses: codecov/test-results-action@47f89e9acb64b76debcd5ea40642d25a4adced9f # v1.1.1
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
       - name: Upload coverage to Qlty
-        if: ${{ matrix.os != 'windows-latest' && matrix.php_version == '8.1' && matrix.dependencies_level != '--prefer-lowest' }}
+        if: ${{ matrix.os != 'windows-latest' && matrix.dependencies_level != '--prefer-lowest' }}
         uses: qltysh/qlty-action/coverage@a19242102d17e497f437d7466aa01b528537e899 # v2.2.0
         with:
           token: ${{ secrets.QLTY_COVERAGE_TOKEN }}

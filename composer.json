@@ -23,7 +23,7 @@
         "source": "https://github.com/mayflower/mo4-coding-standard"
     },
     "require": {
-        "php": "^8.1",
+        "php": "^8.2",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
         "escapestudios/symfony2-coding-standard": "^3.17",
         "slevomat/coding-standard": "^8.23",
@@ -31,7 +31,6 @@
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.45",
-        "nikic/php-parser": "< 5.0.1",
         "phan/phan": "^6.0.0",
         "phpstan/phpstan": "^2.0",
         "phpstan/phpstan-strict-rules": "^2.0",
