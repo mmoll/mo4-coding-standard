@@ -38,6 +38,7 @@ jobs:
         run: vendor/bin/phpcs
   run-tests:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
         php_version:
