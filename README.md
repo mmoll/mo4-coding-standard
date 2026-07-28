@@ -15,6 +15,7 @@ Provides a PHP CodeSniffer ruleset for the MO4 coding standard
 
 ## MO4 Coding Standard
 
+
 The MO4 Coding Standard is an extension of the [Symfony Coding Standard](http://symfony.com/doc/current/contributing/code/standards.html) and adds following rules:
 
 ### MO4.Arrays.ArrayDoubleArrowAlignment
