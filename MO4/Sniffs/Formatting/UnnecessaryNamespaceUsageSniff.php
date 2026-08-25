@@ -50,6 +50,28 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
     ];
 
     /**
+     * Doc comment tags whose type arguments should be checked.
+     *
+     */
+    private const DOC_COMMENT_TAGS = [
+        '@param'  => 1,
+        '@return' => 1,
+        '@throws' => 1,
+        '@var'    => 2,
+    ];
+
+    /**
+     * Tokens to scan for class name occurrences.
+     *
+     */
+    private const SCAN_TOKENS = [
+        T_NAME_FULLY_QUALIFIED,
+        T_NAME_QUALIFIED,
+        T_NAME_RELATIVE,
+        T_DOC_COMMENT_OPEN_TAG,
+    ];
+
+    /**
      * Registers the tokens that this sniff wants to listen for.
      *
      * @return array<int, int>
@@ -78,24 +100,12 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
      */
     public function process(File $phpcsFile, $stackPtr): void
     {
-        $docCommentTags = [
-            '@param'  => 1,
-            '@return' => 1,
-            '@throws' => 1,
-            '@var'    => 2,
-        ];
-        $scanTokens     = [
-            T_NAME_FULLY_QUALIFIED,
-            T_NAME_QUALIFIED,
-            T_NAME_RELATIVE,
-            T_DOC_COMMENT_OPEN_TAG,
-        ];
+        $tokens            = $phpcsFile->getTokens();
+        $useStatements     = $this->getUseStatements($phpcsFile, 0, ($stackPtr - 1));
+        $namespace         = $this->getNamespace($phpcsFile, 0, ($stackPtr - 1));
+        $classNameTokenSet = \array_flip(self::CLASS_NAME_TOKENS);
 
-        $tokens        = $phpcsFile->getTokens();
-        $useStatements = $this->getUseStatements($phpcsFile, 0, ($stackPtr - 1));
-        $namespace     = $this->getNamespace($phpcsFile, 0, ($stackPtr - 1));
-
-        $nsSep = $phpcsFile->findNext($scanTokens, ($stackPtr + 1));
+        $nsSep = $phpcsFile->findNext(self::SCAN_TOKENS, ($stackPtr + 1));
 
         while (false !== $nsSep) {
             $classNameEnd = (int) $phpcsFile->findNext(
@@ -105,7 +115,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                 true
             );
 
-            if (\in_array($tokens[$nsSep]['code'], self::CLASS_NAME_TOKENS, true)) {
+            if (isset($classNameTokenSet[$tokens[$nsSep]['code']])) {
                 $className = $phpcsFile->getTokensAsString(
                     $nsSep,
                     ($classNameEnd - $nsSep)
@@ -123,7 +133,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                 foreach ($tokens[$nsSep]['comment_tags'] as $tag) {
                     $content = $tokens[$tag]['content'];
 
-                    if (!\array_key_exists($content, $docCommentTags)) {
+                    if (!\array_key_exists($content, self::DOC_COMMENT_TAGS)) {
                         continue;
                     }
 
@@ -161,7 +171,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                     $docLineTokens = \array_slice(
                         $docLineTokens,
                         0,
-                        $docCommentTags[$content]
+                        self::DOC_COMMENT_TAGS[$content]
                     );
                     // phpcs:enable
 
@@ -193,7 +203,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                 }
             }
 
-            $nsSep = $phpcsFile->findNext($scanTokens, ($classNameEnd + 1));
+            $nsSep = $phpcsFile->findNext(self::SCAN_TOKENS, ($classNameEnd + 1));
         }
     }
 

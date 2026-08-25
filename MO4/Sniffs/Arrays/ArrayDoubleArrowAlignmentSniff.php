@@ -89,15 +89,17 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
         /** @var array<int> $assignments */
         $assignments  = [];
         // phpcs:enable
-        $keyEndColumn = -1;
-        $lastLine     = -1;
+        $keyEndColumn  = -1;
+        $lastLine      = -1;
+        $arrayTokenSet = \array_flip($this->arrayTokens);
+        $emptyTokenSet = \array_flip(PHP_CodeSniffer_Tokens::EMPTY_TOKENS);
 
         for ($i = ($start + 1); $i < $end; $i++) {
             $current  = $tokens[$i];
             $previous = $tokens[($i - 1)];
 
             // Skip nested arrays.
-            if (\in_array($current['code'], $this->arrayTokens, true)) {
+            if (isset($arrayTokenSet[$current['code']])) {
                 $i = T_ARRAY === $current['code'] ? ($current['parenthesis_closer'] + 1) : ($current['bracket_closer'] + 1);
 
                 continue;
@@ -146,7 +148,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $j = ($i - 1);
 
             while (($j >= 0) && ($tokens[$j]['line'] === $current['line'])) {
-                if (!\in_array($tokens[$j]['code'], PHP_CodeSniffer_Tokens::EMPTY_TOKENS, true)) {
+                if (!isset($emptyTokenSet[$tokens[$j]['code']])) {
                     $hasKeyInLine = true;
                 }
 

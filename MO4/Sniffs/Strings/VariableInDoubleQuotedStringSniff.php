@@ -35,6 +35,12 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 class VariableInDoubleQuotedStringSniff implements Sniff
 {
     /**
+     * Regex to match PHP variables (with optional property/array access) in strings.
+     *
+     */
+    private const VAR_REGEXP = '/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:\->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]*\])?/';
+
+    /**
      * Registers the tokens that this sniff wants to listen for.
      *
      * @return array<int, string>
@@ -61,14 +67,12 @@ class VariableInDoubleQuotedStringSniff implements Sniff
      */
     public function process(File $phpcsFile, $stackPtr): void
     {
-        $varRegExp = '/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:\->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]*\])?/';
-
         $tokens  = $phpcsFile->getTokens();
         $content = $tokens[$stackPtr]['content'];
 
         $matches = [];
 
-        \preg_match_all($varRegExp, $content, $matches, PREG_OFFSET_CAPTURE);
+        \preg_match_all(self::VAR_REGEXP, $content, $matches, PREG_OFFSET_CAPTURE);
 
         foreach ($matches as $match) {
             foreach ($match as [$var, $pos]) {
@@ -76,18 +80,20 @@ class VariableInDoubleQuotedStringSniff implements Sniff
                     continue;
                 }
 
-                if (\strpos(\substr($content, 0, $pos), '{') > 0
-                    && !\str_contains(\substr($content, 0, $pos), '}')
+                $prefix = \substr($content, 0, $pos);
+
+                if (\strpos($prefix, '{') > 0
+                    && !\str_contains($prefix, '}')
                 ) {
                     continue;
                 }
 
-                $lastOpeningBrace = \strrpos(\substr($content, 0, $pos), '{');
+                $lastOpeningBrace = \strrpos($prefix, '{');
 
                 if (false !== $lastOpeningBrace
                     && '$' === $content[($lastOpeningBrace + 1)]
                 ) {
-                    $lastClosingBrace = \strrpos(\substr($content, 0, $pos), '}');
+                    $lastClosingBrace = \strrpos($prefix, '}');
 
                     if (false !== $lastClosingBrace
                         && $lastClosingBrace < $lastOpeningBrace

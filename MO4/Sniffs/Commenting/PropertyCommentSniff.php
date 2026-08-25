@@ -48,6 +48,20 @@ class PropertyCommentSniff extends AbstractScopeSniff
     ];
 
     /**
+     * Tokens used to find the previous doc comment boundary.
+     *
+     */
+    private const FIND_TOKENS = [
+        T_COMMENT,
+        T_DOC_COMMENT_CLOSE_TAG,
+        T_CLASS,
+        T_CONST,
+        T_FUNCTION,
+        T_VARIABLE,
+        T_OPEN_TAG,
+    ];
+
+    /**
      * Construct PropertyCommentSniff
      *
      * @throws RuntimeException
@@ -78,15 +92,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
      */
     protected function processTokenWithinScope(File $phpcsFile, $stackPtr, $currScope): void
     {
-        $find   = [
-            T_COMMENT,
-            T_DOC_COMMENT_CLOSE_TAG,
-            T_CLASS,
-            T_CONST,
-            T_FUNCTION,
-            T_VARIABLE,
-            T_OPEN_TAG,
-        ];
         $tokens = $phpcsFile->getTokens();
 
         // Before even checking the doc blocks above the current var/const,
@@ -126,7 +131,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
             return;
         }
 
-        $commentEnd = (int) $phpcsFile->findPrevious($find, ($stackPtr - 1));
+        $commentEnd = (int) $phpcsFile->findPrevious(self::FIND_TOKENS, ($stackPtr - 1));
 
         $conditions    = $tokens[$commentEnd]['conditions'];
         $lastCondition = \array_pop($conditions);
