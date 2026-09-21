@@ -22,6 +22,9 @@
         "issues": "https://github.com/mayflower/mo4-coding-standard/issues",
         "source": "https://github.com/mayflower/mo4-coding-standard"
     },
+    "autoload-dev": {
+        "MO4\\Tests": "MO4/Tests"
+    },
     "require": {
         "php": "^8.1",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7 || ^1.0",
