@@ -80,11 +80,14 @@ class MultiLineArraySniff implements Sniff
             $end       = $current['bracket_closer'];
         }
 
-        if ($tokens[$start]['line'] === $tokens[$end]['line']) {
+        $openLine = $tokens[$start]['line'];
+
+        if ($openLine === $tokens[$end]['line']) {
             return;
         }
 
-        if ($tokens[($start + 2)]['line'] === $tokens[$start]['line']) {
+        // Opening must be followed by a newline on the next line.
+        if ($tokens[($start + 2)]['line'] === $openLine) {
             $fixable = $phpcsFile->addFixableError(
                 \sprintf(
                     'opening %s of multi line array must be followed by newline',
@@ -94,13 +97,14 @@ class MultiLineArraySniff implements Sniff
                 'OpeningMustBeFollowedByNewline'
             );
 
-            if (true === $fixable) {
+            if (false !== $fixable) {
                 $phpcsFile->fixer->beginChangeset();
                 $phpcsFile->fixer->addNewline($start);
                 $phpcsFile->fixer->endChangeset();
             }
         }
 
+        // Closing must be in its own line.
         if ($tokens[($end - 2)]['line'] !== $tokens[$end]['line']) {
             return;
         }
@@ -114,7 +118,7 @@ class MultiLineArraySniff implements Sniff
             'ClosingMustBeInOwnLine'
         );
 
-        if (true !== $fixable) {
+        if (false === $fixable) {
             return;
         }
 
