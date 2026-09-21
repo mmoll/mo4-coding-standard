@@ -14,7 +14,6 @@ declare(strict_types=1);
 
 namespace MO4\Sniffs\Commenting;
 
-use MO4\Library\PregLibrary;
 use PHP_CodeSniffer\Exceptions\RuntimeException;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\AbstractScopeSniff;
@@ -48,6 +47,29 @@ class PropertyCommentSniff extends AbstractScopeSniff
     ];
 
     /**
+     * Token types searched when walking backwards to a preceding comment.
+     *
+     */
+    private const FIND_PREVIOUS = [
+        T_COMMENT,
+        T_DOC_COMMENT_CLOSE_TAG,
+        T_CLASS,
+        T_CONST,
+        T_FUNCTION,
+        T_VARIABLE,
+        T_OPEN_TAG,
+    ];
+
+    /**
+     * Token types searched when looking for a comment following a declaration.
+     *
+     */
+    private const POST_COMMENT = [
+        T_DOC_COMMENT_OPEN_TAG,
+        T_COMMENT,
+    ];
+
+    /**
      * Construct PropertyCommentSniff
      *
      * @throws RuntimeException
@@ -78,27 +100,12 @@ class PropertyCommentSniff extends AbstractScopeSniff
      */
     protected function processTokenWithinScope(File $phpcsFile, $stackPtr, $currScope): void
     {
-        $find   = [
-            T_COMMENT,
-            T_DOC_COMMENT_CLOSE_TAG,
-            T_CLASS,
-            T_CONST,
-            T_FUNCTION,
-            T_VARIABLE,
-            T_OPEN_TAG,
-        ];
         $tokens = $phpcsFile->getTokens();
 
         // Before even checking the doc blocks above the current var/const,
         // check if we have a single line comment after it on the same line,
         // and if that one is OK.
-        $postComment = $phpcsFile->findNext(
-            [
-                T_DOC_COMMENT_OPEN_TAG,
-                T_COMMENT,
-            ],
-            $stackPtr
-        );
+        $postComment = $phpcsFile->findNext(self::POST_COMMENT, $stackPtr);
 
         if (false !== $postComment
             && $tokens[$postComment]['line'] === $tokens[$stackPtr]['line']
@@ -126,10 +133,10 @@ class PropertyCommentSniff extends AbstractScopeSniff
             return;
         }
 
-        $commentEnd = (int) $phpcsFile->findPrevious($find, ($stackPtr - 1));
+        $commentEnd = (int) $phpcsFile->findPrevious(self::FIND_PREVIOUS, $stackPtr - 1);
 
         $conditions    = $tokens[$commentEnd]['conditions'];
-        $lastCondition = \array_pop($conditions);
+        $lastCondition = \end($conditions);
 
         if (T_CLASS !== $lastCondition) {
             return;
@@ -165,9 +172,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
                 $length
             );
 
-            $vars = PregLibrary::MO4PregSplit('/\s+@var\s+/', $tokensAsString);
-
-            $varCount = (\count($vars) - 1);
+            $varCount = \preg_match_all('/\s+@var\s+/', $tokensAsString);
 
             if ((0 === $varCount) || ($varCount > 1)) {
                 $phpcsFile->addError(

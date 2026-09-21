@@ -50,6 +50,28 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
     ];
 
     /**
+     * Doc comment tags that may contain class references to check for shorthand usage.
+     *
+     * The value is the number of leading whitespace-separated tokens treated as a type.
+     */
+    private const DOC_COMMENT_TAGS = [
+        '@param'  => 1,
+        '@return' => 1,
+        '@throws' => 1,
+        '@var'    => 2,
+    ];
+
+    /**
+     * Tokens scanned when searching for the next namespace/class boundary.
+     */
+    private const SCAN_TOKENS = [
+        T_NAME_FULLY_QUALIFIED,
+        T_NAME_QUALIFIED,
+        T_NAME_RELATIVE,
+        T_DOC_COMMENT_OPEN_TAG,
+    ];
+
+    /**
      * Registers the tokens that this sniff wants to listen for.
      *
      * @return array<int, int>
@@ -78,18 +100,8 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
      */
     public function process(File $phpcsFile, $stackPtr): void
     {
-        $docCommentTags = [
-            '@param'  => 1,
-            '@return' => 1,
-            '@throws' => 1,
-            '@var'    => 2,
-        ];
-        $scanTokens     = [
-            T_NAME_FULLY_QUALIFIED,
-            T_NAME_QUALIFIED,
-            T_NAME_RELATIVE,
-            T_DOC_COMMENT_OPEN_TAG,
-        ];
+        $docCommentTags = self::DOC_COMMENT_TAGS;
+        $scanTokens     = self::SCAN_TOKENS;
 
         $tokens        = $phpcsFile->getTokens();
         $useStatements = $this->getUseStatements($phpcsFile, 0, ($stackPtr - 1));
