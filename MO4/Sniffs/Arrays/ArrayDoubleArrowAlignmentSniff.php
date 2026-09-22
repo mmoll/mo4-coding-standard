@@ -130,12 +130,12 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             // Early exit for duplicate line detection
             if ($lastLine === $line) {
                 $previousComma = $this->getPreviousComma($phpcsFile, $i, $start);
-                
+
                 $msg = 'only one "=>" assignments per line is allowed in a multi line array';
-                
+
                 if (false !== $previousComma) {
                     $fixable = $phpcsFile->addFixableError($msg, $i, 'OneAssignmentPerLine');
-                    
+
                     if (true === $fixable) {
                         $phpcsFile->fixer->beginChangeset();
                         $phpcsFile->fixer->addNewline((int) $previousComma);
@@ -152,7 +152,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             // Check if key is on the same line - optimized lookup
             $hasKeyInLine = false;
             $j            = ($i - 1);
-            
+
             // Stop at the beginning of the line for efficiency
             $lineStart = $current['line'];
 
@@ -165,14 +165,14 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
 
                 $j--;
             }
-            
+
             if (!$hasKeyInLine) {
                 $fixable = $phpcsFile->addFixableError(
                     'in arrays, keys and "=>" must be on the same line',
                     $i,
                     'KeyAndValueNotOnSameLine'
                 );
-                
+
                 if (true === $fixable) {
                     $phpcsFile->fixer->beginChangeset();
                     $phpcsFile->fixer->replaceToken($j, '');
@@ -236,12 +236,12 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
     private function getPreviousComma(File $phpcsFile, int $stackPtr, int $start)
     {
         $tokens = $phpcsFile->getTokens();
-        
+
         // Early return if we're at the beginning
         if ($stackPtr <= $start) {
             return false;
         }
-        
+
         // Direct lookup for comma or closing bracket
         $ptr = $stackPtr;
 
@@ -251,11 +251,11 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             if (false === $ptr) {
                 return false;
             }
-            
+
             if (T_COMMA === $tokens[$ptr]['code']) {
                 return $ptr;
             }
-            
+
             // Handle short array closing brackets
             if (T_CLOSE_SHORT_ARRAY !== $tokens[$ptr]['code']) {
                 continue;
