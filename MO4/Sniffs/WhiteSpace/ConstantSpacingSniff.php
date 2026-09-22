@@ -56,14 +56,12 @@ class ConstantSpacingSniff implements Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
-     *
      * @param File $phpcsFile The file being scanned.
      * @param int  $stackPtr  The position of the current token in
      *                        the stack passed in $tokens.
      *
      */
-    public function process(File $phpcsFile, $stackPtr): void
+    public function process(File $phpcsFile, int $stackPtr): void
     {
         $tokens  = $phpcsFile->getTokens();
         $nextPtr = $stackPtr + 1;

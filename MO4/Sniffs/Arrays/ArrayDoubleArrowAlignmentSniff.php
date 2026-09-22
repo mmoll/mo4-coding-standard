@@ -70,14 +70,12 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
     /**
      * Processes this test, when one of its tokens is encountered.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
-     *
      * @param File $phpcsFile The file being scanned.
      * @param int  $stackPtr  The position of the current token in
      *                        the stack passed in $tokens.
      *
      */
-    public function process(File $phpcsFile, $stackPtr): void
+    public function process(File $phpcsFile, int $stackPtr): void
     {
         $tokens  = $phpcsFile->getTokens();
         $current = $tokens[$stackPtr];
@@ -259,12 +257,11 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             }
             
             // Handle short array closing brackets
-            if (T_CLOSE_SHORT_ARRAY === $tokens[$ptr]['code']) {
-                $ptr = $tokens[$ptr]['bracket_opener'];
-
-                // Continue searching from this position
+            if (T_CLOSE_SHORT_ARRAY !== $tokens[$ptr]['code']) {
                 continue;
             }
+
+            $ptr = $tokens[$ptr]['bracket_opener'];
         }
 
         return false;

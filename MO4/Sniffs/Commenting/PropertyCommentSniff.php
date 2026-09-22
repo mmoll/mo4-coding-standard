@@ -85,7 +85,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
      * Processes a token that is found within the scope that this test is
      * listening to.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      *
      * @param File $phpcsFile The file where this token was found.
@@ -98,7 +97,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
      *
      * @throws RuntimeException
      */
-    protected function processTokenWithinScope(File $phpcsFile, $stackPtr, $currScope): void
+    protected function processTokenWithinScope(File $phpcsFile, int $stackPtr, int $currScope): void
     {
         $tokens = $phpcsFile->getTokens();
 
@@ -208,7 +207,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
                     'NotMultiLineDocBlock'
                 );
             }
-        // phpcs:disable SlevomatCodingStandard.ControlStructures.EarlyExit
         } elseif (T_COMMENT === $code) {
             // It seems that when we are in here,
             // then we have a line comment at $commentEnd.
@@ -220,7 +218,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
                 $commentEnd
             );
 
-            // phpcs:enable SlevomatCodingStandard.ControlStructures.EarlyExit
             if (false === $firstOnLine) {
                 $commentStart = $phpcsFile->findPrevious(
                     T_COMMENT,
@@ -240,7 +237,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
     /**
      * Process tokens outside scope.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
      * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
      *
      * @param File $phpcsFile The file where this token was found.
@@ -248,7 +244,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
      *                        token was found.
      *
      */
-    protected function processTokenOutsideScope(File $phpcsFile, $stackPtr): void
+    protected function processTokenOutsideScope(File $phpcsFile, int $stackPtr): void
     {
     }
 }

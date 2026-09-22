@@ -87,8 +87,6 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
      * Called when one of the token types that this sniff is listening for
      * is found.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
-     *
      * @param File $phpcsFile The PHP_CodeSniffer file where the
      *                        token was found.
      * @param int  $stackPtr  The position in the PHP_CodeSniffer
@@ -98,7 +96,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
      *
      * @throws RuntimeException
      */
-    public function process(File $phpcsFile, $stackPtr): void
+    public function process(File $phpcsFile, int $stackPtr): void
     {
         $docCommentTags = self::DOC_COMMENT_TAGS;
         $scanTokens     = self::SCAN_TOKENS;
@@ -168,17 +166,14 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                         PREG_SPLIT_NO_EMPTY
                     );
 
-                    // phpcs:disable
                     /** @var array<string> $docLineTokens */
                     $docLineTokens = \array_slice(
                         $docLineTokens,
                         0,
                         $docCommentTags[$content]
                     );
-                    // phpcs:enable
 
                     foreach ($docLineTokens as $docLineToken) {
-                        // phpcs:disable
                         /** @var array<string> $typeTokens */
                         $typeTokens = PregLibrary::MO4PregSplit(
                             '/\|/',
@@ -186,7 +181,6 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                             -1,
                             PREG_SPLIT_NO_EMPTY
                         );
-                        // phpcs:enable
 
                         foreach ($typeTokens as $typeToken) {
                             if (\in_array($typeToken, $useStatements, true)) {

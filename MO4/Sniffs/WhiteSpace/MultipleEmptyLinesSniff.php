@@ -37,14 +37,11 @@ class MultipleEmptyLinesSniff implements Sniff
     }
 
     /**
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
-     *
-     * @param File $phpcsFile
      * @param int  $stackPtr  The current token index.
      *
      * @return void|int
      */
-    public function process(File $phpcsFile, $stackPtr)
+    public function process(File $phpcsFile, int $stackPtr)
     {
         $tokens = $phpcsFile->getTokens();
 

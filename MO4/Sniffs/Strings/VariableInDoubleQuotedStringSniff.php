@@ -55,8 +55,6 @@ class VariableInDoubleQuotedStringSniff implements Sniff
      * Called when one of the token types that this sniff is listening for
      * is found.
      *
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint
-     *
      * @param File $phpcsFile The PHP_CodeSniffer file where the
      *                        token was found.
      * @param int  $stackPtr  The position in the PHP_CodeSniffer
@@ -64,7 +62,7 @@ class VariableInDoubleQuotedStringSniff implements Sniff
      *                        was found.
      *
      */
-    public function process(File $phpcsFile, $stackPtr): void
+    public function process(File $phpcsFile, int $stackPtr): void
     {
         $tokens  = $phpcsFile->getTokens();
         $content = $tokens[$stackPtr]['content'];
