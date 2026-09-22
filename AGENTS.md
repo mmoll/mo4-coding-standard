@@ -2,7 +2,7 @@
 
 ## Setup & Dependencies
 
-This is a PHP coding standard library (PHPCS ruleset) that implements the **MO4** style. It extends **Symfony Coding Standard** with MO4-specific rules. It uses PHP_CodeSniffer 4.x.
+This is a PHP coding standard library (PHPCS ruleset) that implements the **MO4** style. It extends **Symfony Coding Standard** with MO4-specific rules. It uses PHPCS 4.x.
 
 ```bash
 composer install

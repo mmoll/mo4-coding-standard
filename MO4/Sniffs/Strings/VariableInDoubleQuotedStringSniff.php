@@ -69,9 +69,9 @@ class VariableInDoubleQuotedStringSniff implements Sniff
         $tokens  = $phpcsFile->getTokens();
         $content = $tokens[$stackPtr]['content'];
 
-        $matches = [];
-
         \preg_match_all(self::VARIABLE_REGEXP, $content, $matches, PREG_OFFSET_CAPTURE);
+
+        $toWrap = [];
 
         foreach ($matches as $match) {
             foreach ($match as [$var, $pos]) {
@@ -103,7 +103,7 @@ class VariableInDoubleQuotedStringSniff implements Sniff
 
                 $fix = $phpcsFile->addFixableError(
                     \sprintf(
-                        'must surround variable %s with { }',
+                        'must surround variable %s with { }',
                         $var
                     ),
                     $stackPtr,
@@ -114,15 +114,25 @@ class VariableInDoubleQuotedStringSniff implements Sniff
                     continue;
                 }
 
-                $correctVariable = $this->surroundVariableWithBraces(
-                    $content,
-                    $pos,
-                    $var
-                );
-
-                $this->fixPhpCsFile($stackPtr, $correctVariable, $phpcsFile);
+                $toWrap[] = [$pos, $var];
             }
         }
+
+        if ([] === $toWrap) {
+            return;
+        }
+
+        $correctVariable = $content;
+
+        foreach (\array_reverse($toWrap) as [$pos, $var]) {
+            $correctVariable = $this->surroundVariableWithBraces(
+                $correctVariable,
+                $pos,
+                $var
+            );
+        }
+
+        $this->fixPhpCsFile($stackPtr, $correctVariable, $phpcsFile);
     }
 
     /**
