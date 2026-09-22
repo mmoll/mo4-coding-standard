@@ -265,10 +265,8 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
                 // Continue searching from this position
                 continue;
             }
-            
-            return false;
         }
-        
+
         return false;
     }
 }
