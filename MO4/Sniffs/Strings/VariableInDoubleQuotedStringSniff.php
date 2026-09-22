@@ -37,7 +37,7 @@ class VariableInDoubleQuotedStringSniff implements Sniff
     /**
      * Regular expression matching variable references inside a double quoted string.
      */
-    private const VARIABLE_REGEXP = '/\$[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*(?:\->[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*|\[[^\]]*\])?/';
+    private const VARIABLE_REGEXP = '/\$[a-zA-Z_\x7f-\xff][\w\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][\w\x7f-\xff]*|\[[^\]]*\])?/';
 
     /**
      * Registers the tokens that this sniff wants to listen for.
