@@ -237,12 +237,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
     {
         $tokens = $phpcsFile->getTokens();
 
-        // Early return if we're at the beginning
-        if ($stackPtr <= $start) {
-            return false;
-        }
-
-        // Direct lookup for comma or closing bracket
         $ptr = $stackPtr;
 
         while ($ptr > $start) {
@@ -257,11 +251,10 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             }
 
             // Handle short array closing brackets
-            if (T_CLOSE_SHORT_ARRAY !== $tokens[$ptr]['code']) {
-                continue;
+            // phpcs:ignore SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed
+            if (T_CLOSE_SHORT_ARRAY === $tokens[$ptr]['code']) {
+                $ptr = $tokens[$ptr]['bracket_opener'];
             }
-
-            $ptr = $tokens[$ptr]['bracket_opener'];
         }
 
         return false;
