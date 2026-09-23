@@ -14,6 +14,7 @@ declare(strict_types=1);
 
 namespace MO4\Sniffs\Arrays;
 
+use PHP_CodeSniffer\Exceptions\RuntimeException;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
 use PHP_CodeSniffer\Util\Tokens as PHP_CodeSniffer_Tokens;
@@ -257,6 +258,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             }
         }
 
-        return false;
+        // @codeCoverageIgnore
+        throw new RuntimeException('Unexpected Error in MO4 Coding Standard.');
     }
 }
