@@ -258,7 +258,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             }
         }
 
-        // @codeCoverageIgnore
-        throw new RuntimeException('Unexpected Error in MO4 Coding Standard.');
+        throw new RuntimeException('Unexpected Error in MO4 Coding Standard.');  // @codeCoverageIgnore
     }
 }
