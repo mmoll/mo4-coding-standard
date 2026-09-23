@@ -150,16 +150,17 @@ class PropertyCommentSniff extends AbstractScopeSniff
             // above the current line,
             // and has a variable preceding it in the same line.
             // If yes, it doesn't count.
-            $firstTokenOnLine = $phpcsFile->findFirstOnLine(
-                $this->myTokenTypes,
-                $commentEnd
-            );
-
-            if (false !== $firstTokenOnLine
-                && $tokens[$commentStart]['line'] === $tokens[$commentEnd]['line']
+            if ($tokens[$commentStart]['line'] === $tokens[$commentEnd]['line']
                 && $tokens[$stackPtr]['line'] > $tokens[$commentEnd]['line']
             ) {
-                return;
+                $firstTokenOnLine = $phpcsFile->findFirstOnLine(
+                    $this->myTokenTypes,
+                    $commentEnd
+                );
+
+                if (false !== $firstTokenOnLine) {
+                    return;
+                }
             }
 
             $isCommentOneLiner

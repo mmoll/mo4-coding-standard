@@ -69,51 +69,56 @@ class VariableInDoubleQuotedStringSniff implements Sniff
 
         \preg_match_all(self::VARIABLE_REGEXP, $content, $matches, PREG_OFFSET_CAPTURE);
 
-        $toWrap = [];
+        $toWrap            = [];
+        $scanOffset        = 0;
+        $firstOpeningBrace = null;
+        $lastOpeningBrace  = null;
+        $lastClosingBrace  = null;
 
-        foreach ($matches as $match) {
-            foreach ($match as [$var, $pos]) {
-                if (1 !== $pos && '{' === $content[($pos - 1)]) {
-                    continue;
+        foreach ($matches[0] as [$var, $pos]) {
+            for ($i = $scanOffset; $i < $pos; $i++) {
+                if ('{' === $content[$i]) {
+                    $firstOpeningBrace ??= $i;
+                    $lastOpeningBrace    = $i;
+                } elseif ('}' === $content[$i]) {
+                    $lastClosingBrace = $i;
                 }
-
-                $before = \substr($content, 0, $pos);
-
-                if (\strpos($before, '{') > 0
-                    && !\str_contains($before, '}')
-                ) {
-                    continue;
-                }
-
-                $lastOpeningBrace = \strrpos($before, '{');
-
-                if (false !== $lastOpeningBrace
-                    && '$' === $content[($lastOpeningBrace + 1)]
-                ) {
-                    $lastClosingBrace = \strrpos($before, '}');
-
-                    if (false !== $lastClosingBrace
-                        && $lastClosingBrace < $lastOpeningBrace
-                    ) {
-                        continue;
-                    }
-                }
-
-                $fix = $phpcsFile->addFixableError(
-                    \sprintf(
-                        'must surround variable %s with { }',
-                        $var
-                    ),
-                    $stackPtr,
-                    'NotSurroundedWithBraces'
-                );
-
-                if (true !== $fix) {
-                    continue;
-                }
-
-                $toWrap[] = [$pos, $var];
             }
+
+            $scanOffset = $pos;
+
+            if (1 !== $pos && '{' === $content[($pos - 1)]) {
+                continue;
+            }
+
+            if (null !== $firstOpeningBrace
+                && $firstOpeningBrace > 0
+                && null === $lastClosingBrace
+            ) {
+                continue;
+            }
+
+            if (null !== $lastOpeningBrace
+                && '$' === $content[($lastOpeningBrace + 1)]
+                && (null === $lastClosingBrace || $lastClosingBrace < $lastOpeningBrace)
+            ) {
+                continue;
+            }
+
+            $fix = $phpcsFile->addFixableError(
+                \sprintf(
+                    'must surround variable %s with { }',
+                    $var
+                ),
+                $stackPtr,
+                'NotSurroundedWithBraces'
+            );
+
+            if (true !== $fix) {
+                continue;
+            }
+
+            $toWrap[] = [$pos, $var];
         }
 
         if ([] === $toWrap) {

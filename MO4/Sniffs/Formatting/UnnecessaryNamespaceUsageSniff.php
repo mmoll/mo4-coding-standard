@@ -104,14 +104,15 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
         $tokens        = $phpcsFile->getTokens();
         $useStatements = $this->getUseStatements($phpcsFile, 0, ($stackPtr - 1));
         $namespace     = $this->getNamespace($phpcsFile, 0, ($stackPtr - 1));
+        $scanEnd       = $tokens[$stackPtr]['scope_closer'] ?? null;
 
-        $nsSep = $phpcsFile->findNext($scanTokens, ($stackPtr + 1));
+        $nsSep = $phpcsFile->findNext($scanTokens, ($stackPtr + 1), $scanEnd);
 
         while (false !== $nsSep) {
             $classNameEnd = (int) $phpcsFile->findNext(
                 self::CLASS_NAME_TOKENS,
                 $nsSep,
-                null,
+                $scanEnd,
                 true
             );
 
@@ -199,7 +200,7 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
                 }
             }
 
-            $nsSep = $phpcsFile->findNext($scanTokens, ($classNameEnd + 1));
+            $nsSep = $phpcsFile->findNext($scanTokens, ($classNameEnd + 1), $scanEnd);
         }
     }
 

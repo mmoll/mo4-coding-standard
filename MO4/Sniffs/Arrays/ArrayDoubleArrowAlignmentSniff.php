@@ -14,10 +14,9 @@ declare(strict_types=1);
 
 namespace MO4\Sniffs\Arrays;
 
-use PHP_CodeSniffer\Exceptions\RuntimeException;
 use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\Sniff;
-use PHP_CodeSniffer\Util\Tokens as PHP_CodeSniffer_Tokens;
+use PHP_CodeSniffer\Util\Tokens;
 
 /**
  * Array Double Arrow Alignment sniff.
@@ -55,6 +54,13 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
         T_OPEN_SHORT_ARRAY => true,
         T_ARRAY            => true,
     ];
+
+    /**
+     * Fast membership lookup for tokens that do not contribute to a key.
+     *
+     * @var array<int|string, int|string>
+     */
+    private $emptyTokenLookup = Tokens::EMPTY_TOKENS;
 
     /**
      * Registers the tokens that this sniff wants to listen for.
@@ -97,6 +103,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
         $keyEndColumn     = -1;
         $lastLine         = -1;
         $assignmentsCount = 0;
+        $previousComma    = false;
 
         // Process array elements in a single pass
         for ($i = ($start + 1); $i < $end; $i++) {
@@ -116,6 +123,12 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
                 continue;
             }
 
+            if (T_COMMA === $current['code']) {
+                $previousComma = $i;
+
+                continue;
+            }
+
             if (T_DOUBLE_ARROW !== $current['code']) {
                 continue;
             }
@@ -130,8 +143,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
 
             // Early exit for duplicate line detection
             if ($lastLine === $line) {
-                $previousComma = $this->getPreviousComma($phpcsFile, $i, $start);
-
                 $msg = 'only one "=>" assignments per line is allowed in a multi line array';
 
                 if (false !== $previousComma) {
@@ -158,7 +169,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $lineStart = $current['line'];
 
             while (($j >= 0) && ($tokens[$j]['line'] === $lineStart)) {
-                if (!\in_array($tokens[$j]['code'], PHP_CodeSniffer_Tokens::EMPTY_TOKENS, true)) {
+                if (!isset($this->emptyTokenLookup[$tokens[$j]['code']])) {
                     $hasKeyInLine = true;
 
                     break;
@@ -221,42 +232,5 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
 
             $phpcsFile->fixer->endChangeset();
         }
-    }
-
-    /**
-     * Find previous comma in array.
-     *
-     * @param File $phpcsFile The file being scanned.
-     * @param int  $stackPtr  The position of the current token in
-     *                        the stack passed in $tokens.
-     * @param int  $start     Start of the array
-     *
-     * @return bool|int
-     */
-    private function getPreviousComma(File $phpcsFile, int $stackPtr, int $start)
-    {
-        $tokens = $phpcsFile->getTokens();
-
-        $ptr = $stackPtr;
-
-        while ($ptr > $start) {
-            $ptr = $phpcsFile->findPrevious([T_COMMA, T_CLOSE_SHORT_ARRAY], $ptr - 1, $start);
-
-            if (false === $ptr) {
-                return false;
-            }
-
-            if (T_COMMA === $tokens[$ptr]['code']) {
-                return $ptr;
-            }
-
-            // Handle short array closing brackets
-            // phpcs:ignore SlevomatCodingStandard.ControlStructures.EarlyExit.EarlyExitNotUsed
-            if (T_CLOSE_SHORT_ARRAY === $tokens[$ptr]['code']) {
-                $ptr = $tokens[$ptr]['bracket_opener'];
-            }
-        }
-
-        throw new RuntimeException('Unexpected Error in MO4 Coding Standard.');  // @codeCoverageIgnore
     }
 }
