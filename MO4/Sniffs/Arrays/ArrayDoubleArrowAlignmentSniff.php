@@ -167,7 +167,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
                 $j--;
             }
 
-            if (!$hasKeyInLine) {
+            if (false === $hasKeyInLine) {
                 $fixable = $phpcsFile->addFixableError(
                     'in arrays, keys and "=>" must be on the same line',
                     $i,
@@ -197,7 +197,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $current = $tokens[$ptr];
             $column  = $current['column'];
 
-            // Avoid redundant calculations
             if ($column === $doubleArrowStartColumn) {
                 continue;
             }

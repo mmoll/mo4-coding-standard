@@ -94,7 +94,7 @@ class MultiLineArraySniff implements Sniff
                 'OpeningMustBeFollowedByNewline'
             );
 
-            if (false !== $fixable) {
+            if (true === $fixable) {
                 $phpcsFile->fixer->beginChangeset();
                 $phpcsFile->fixer->addNewline($start);
                 $phpcsFile->fixer->endChangeset();
@@ -115,7 +115,7 @@ class MultiLineArraySniff implements Sniff
             'ClosingMustBeInOwnLine'
         );
 
-        if (false === $fixable) {
+        if (true !== $fixable) {
             return;
         }
 
