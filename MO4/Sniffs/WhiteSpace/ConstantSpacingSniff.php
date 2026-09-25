@@ -37,7 +37,7 @@ class ConstantSpacingSniff implements Sniff
      *
      * @var array
      */
-    protected $arrayTokens = [
+    protected array $arrayTokens = [
         T_CONST,
     ];
 

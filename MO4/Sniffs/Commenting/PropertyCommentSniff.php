@@ -41,7 +41,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
      *
      * @var array<int, int>
      */
-    private $myTokenTypes = [
+    private array $myTokenTypes = [
         T_VARIABLE,
         T_CONST,
     ];

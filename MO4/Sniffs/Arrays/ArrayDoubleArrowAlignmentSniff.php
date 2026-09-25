@@ -40,7 +40,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
      *
      * @var array
      */
-    protected $arrayTokens = [
+    protected array $arrayTokens = [
         T_OPEN_SHORT_ARRAY,
         T_ARRAY,
     ];
@@ -50,7 +50,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
      *
      * @var array
      */
-    protected $arrayTokenLookup = [
+    protected array $arrayTokenLookup = [
         T_OPEN_SHORT_ARRAY => true,
         T_ARRAY            => true,
     ];
