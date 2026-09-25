@@ -179,17 +179,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
                 $length
             );
 
-            // Early return if no @var annotations found
-            if (!\str_contains($tokensAsString, '@var')) {
-                $phpcsFile->addError(
-                    'property doc comment must have exactly one @var annotation',
-                    $commentStart,
-                    'MustHaveOneVarAnnotationDefined'
-                );
-
-                return;
-            }
-
             $varCount = \preg_match_all('/\s+@var\s+/', $tokensAsString);
 
             if ((0 === $varCount) || ($varCount > 1)) {
