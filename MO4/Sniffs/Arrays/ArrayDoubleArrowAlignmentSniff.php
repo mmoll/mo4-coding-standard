@@ -56,13 +56,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
     ];
 
     /**
-     * Fast membership lookup for tokens that do not contribute to a key.
-     *
-     * @var array<int|string, int|string>
-     */
-    private $emptyTokenLookup = Tokens::EMPTY_TOKENS;
-
-    /**
      * Registers the tokens that this sniff wants to listen for.
      *
      * @return array<int, int>
@@ -105,7 +98,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
         $assignmentsCount = 0;
         $previousComma    = false;
 
-        // Process array elements in a single pass
         for ($i = ($start + 1); $i < $end; $i++) {
             $current = $tokens[$i];
 
@@ -141,7 +133,6 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $column = $previous['column'];
             $line   = $current['line'];
 
-            // Early exit for duplicate line detection
             if ($lastLine === $line) {
                 $msg = 'only one "=>" assignments per line is allowed in a multi line array';
 
@@ -169,7 +160,8 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $lineStart = $current['line'];
 
             while (($j >= 0) && ($tokens[$j]['line'] === $lineStart)) {
-                if (!isset($this->emptyTokenLookup[$tokens[$j]['code']])) {
+                // Tokens::EMPTY_TOKENS lookup for tokens that do not contribute to a key.
+                if (!isset(Tokens::EMPTY_TOKENS[$tokens[$j]['code']])) {
                     $hasKeyInLine = true;
 
                     break;

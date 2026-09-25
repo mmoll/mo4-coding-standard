@@ -83,7 +83,6 @@ class MultiLineArraySniff implements Sniff
             return;
         }
 
-        // Opening must be followed by a newline on the next line.
         if ($tokens[($start + 2)]['line'] === $openLine) {
             $fixable = $phpcsFile->addFixableError(
                 \sprintf(
@@ -101,7 +100,6 @@ class MultiLineArraySniff implements Sniff
             }
         }
 
-        // Closing must be in its own line.
         if ($tokens[($end - 2)]['line'] !== $tokens[$end]['line']) {
             return;
         }

@@ -48,9 +48,8 @@ class PropertyCommentSniff extends AbstractScopeSniff
 
     /**
      * Token types searched when walking backwards to a preceding comment.
-     *
      */
-    private const FIND_PREVIOUS = [
+    private const PRE_COMMENT = [
         T_COMMENT,
         T_DOC_COMMENT_CLOSE_TAG,
         T_CLASS,
@@ -62,7 +61,6 @@ class PropertyCommentSniff extends AbstractScopeSniff
 
     /**
      * Token types searched when looking for a comment following a declaration.
-     *
      */
     private const POST_COMMENT = [
         T_DOC_COMMENT_OPEN_TAG,
@@ -101,7 +99,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
     {
         $tokens = $phpcsFile->getTokens();
 
-        // Early return if not a property (variable) or constant
+        // Don't do constants for now, so return early
         if (T_CONST === $tokens[$stackPtr]['code']) {
             return;
         }
@@ -109,7 +107,10 @@ class PropertyCommentSniff extends AbstractScopeSniff
         // Before even checking the doc blocks above the current var/const,
         // check if we have a single line comment after it on the same line,
         // and if that one is OK.
-        $postComment = $phpcsFile->findNext(self::POST_COMMENT, $stackPtr);
+        $postComment = $phpcsFile->findNext(
+            self::POST_COMMENT,
+            $stackPtr
+        );
 
         if (false !== $postComment
             && $tokens[$postComment]['line'] === $tokens[$stackPtr]['line']
@@ -133,7 +134,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
         }
 
         // Find the comment ending to check if it's a docblock
-        $commentEnd = (int) $phpcsFile->findPrevious(self::FIND_PREVIOUS, $stackPtr - 1);
+        $commentEnd = (int) $phpcsFile->findPrevious(self::PRE_COMMENT, $stackPtr - 1);
 
         // Early return if we don't have a valid comment context
         if (0 === $commentEnd) {
