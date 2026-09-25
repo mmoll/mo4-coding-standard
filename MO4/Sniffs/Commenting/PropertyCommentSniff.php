@@ -101,6 +101,11 @@ class PropertyCommentSniff extends AbstractScopeSniff
     {
         $tokens = $phpcsFile->getTokens();
 
+        // Early return if not a property (variable) or constant
+        if (T_CONST === $tokens[$stackPtr]['code']) {
+            return;
+        }
+
         // Before even checking the doc blocks above the current var/const,
         // check if we have a single line comment after it on the same line,
         // and if that one is OK.
@@ -127,16 +132,18 @@ class PropertyCommentSniff extends AbstractScopeSniff
             }
         }
 
-        // Don't do constants for now.
-        if (T_CONST === $tokens[$stackPtr]['code']) {
+        // Find the comment ending to check if it's a docblock
+        $commentEnd = (int) $phpcsFile->findPrevious(self::FIND_PREVIOUS, $stackPtr - 1);
+
+        // Early return if we don't have a valid comment context
+        if (0 === $commentEnd) {
             return;
         }
-
-        $commentEnd = (int) $phpcsFile->findPrevious(self::FIND_PREVIOUS, $stackPtr - 1);
 
         $conditions    = $tokens[$commentEnd]['conditions'];
         $lastCondition = \end($conditions);
 
+        // Early return if not within a class scope
         if (T_CLASS !== $lastCondition) {
             return;
         }
@@ -171,6 +178,17 @@ class PropertyCommentSniff extends AbstractScopeSniff
                 $commentStart,
                 $length
             );
+
+            // Early return if no @var annotations found
+            if (!\str_contains($tokensAsString, '@var')) {
+                $phpcsFile->addError(
+                    'property doc comment must have exactly one @var annotation',
+                    $commentStart,
+                    'MustHaveOneVarAnnotationDefined'
+                );
+
+                return;
+            }
 
             $varCount = \preg_match_all('/\s+@var\s+/', $tokensAsString);
 

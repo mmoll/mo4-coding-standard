@@ -35,9 +35,10 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 class VariableInDoubleQuotedStringSniff implements Sniff
 {
     /**
-     * Regular expression matching variable references inside a double quoted string.
+     * Optimized regular expression for checking braces around variables.
+     * This avoids multiple scans by combining the check into one pass.
      */
-    private const VARIABLE_REGEXP = '/\$[a-zA-Z_\x7f-\xff][\w\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][\w\x7f-\xff]*|\[[^\]]*\])?/';
+    private const BRACE_CHECK_REGEXP = '/(?<!\{)\$(?:[a-zA-Z_\x7f-\xff][\w\x7f-\xff]*(?:->[a-zA-Z_\x7f-\xff][\w\x7f-\xff]*|\[[^\]]*\])?)(?!\})/';
 
     /**
      * Registers the tokens that this sniff wants to listen for.
@@ -67,7 +68,18 @@ class VariableInDoubleQuotedStringSniff implements Sniff
         $tokens  = $phpcsFile->getTokens();
         $content = $tokens[$stackPtr]['content'];
 
-        \preg_match_all(self::VARIABLE_REGEXP, $content, $matches, PREG_OFFSET_CAPTURE);
+        // Early return if content doesn't contain variables
+        if (!\str_contains($content, '$')) {
+            return;
+        }
+
+        // Use optimized regex that checks for missing braces in one pass
+        \preg_match_all(self::BRACE_CHECK_REGEXP, $content, $matches, PREG_OFFSET_CAPTURE);
+
+        // If no variables found without braces, we're done
+        if (0 === \count($matches[0])) {
+            return;
+        }
 
         $toWrap            = [];
         $scanOffset        = 0;
@@ -75,7 +87,14 @@ class VariableInDoubleQuotedStringSniff implements Sniff
         $lastOpeningBrace  = null;
         $lastClosingBrace  = null;
 
+        // Process each match to check if it's already properly enclosed
         foreach ($matches[0] as [$var, $pos]) {
+            // Skip if it's already in braces
+            if (isset($content[$pos - 1]) && '{' === $content[$pos - 1]) {
+                continue;
+            }
+
+            // Check for opening braces in the scan range
             for ($i = $scanOffset; $i < $pos; $i++) {
                 if ('{' === $content[$i]) {
                     $firstOpeningBrace ??= $i;
@@ -87,21 +106,12 @@ class VariableInDoubleQuotedStringSniff implements Sniff
 
             $scanOffset = $pos;
 
-            if (1 !== $pos && '{' === $content[($pos - 1)]) {
+            // Skip if already properly enclosed
+            if (null !== $firstOpeningBrace && $firstOpeningBrace > 0 && null === $lastClosingBrace) {
                 continue;
             }
 
-            if (null !== $firstOpeningBrace
-                && $firstOpeningBrace > 0
-                && null === $lastClosingBrace
-            ) {
-                continue;
-            }
-
-            if (null !== $lastOpeningBrace
-                && '$' === $content[($lastOpeningBrace + 1)]
-                && (null === $lastClosingBrace || $lastClosingBrace < $lastOpeningBrace)
-            ) {
+            if (null !== $lastOpeningBrace && '$' === $content[($lastOpeningBrace + 1)] && (null === $lastClosingBrace || $lastClosingBrace < $lastOpeningBrace)) {
                 continue;
             }
 
