@@ -15,7 +15,7 @@ declare(strict_types=1);
 namespace MO4\Sniffs\Arrays;
 
 use PHP_CodeSniffer\Files\File;
-use PHP_CodeSniffer\Sniffs\Sniff;
+use PHP_CodeSniffer\Sniffs\AbstractArraySniff;
 use PHP_CodeSniffer\Util\Tokens;
 
 /**
@@ -33,65 +33,40 @@ use PHP_CodeSniffer\Util\Tokens;
  *
  * @psalm-api
  */
-class ArrayDoubleArrowAlignmentSniff implements Sniff
+class ArrayDoubleArrowAlignmentSniff extends AbstractArraySniff
 {
     /**
-     * Define all types of arrays.
+     * Processes a single-line array definition.
      *
-     * @var array
+     * @param File  $phpcsFile  The file being checked.
+     * @param int   $stackPtr   The position of the current token.
+     * @param int   $arrayStart The token that starts the array.
+     * @param int   $arrayEnd   The token that ends the array.
+     * @param array $indices    The array's keys, double arrows, and values.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
      */
-    protected array $arrayTokens = [
-        T_OPEN_SHORT_ARRAY,
-        T_ARRAY,
-    ];
-
-    /**
-     * Fast membership lookup for array tokens.
-     *
-     * @var array
-     */
-    protected array $arrayTokenLookup = [
-        T_OPEN_SHORT_ARRAY => true,
-        T_ARRAY            => true,
-    ];
-
-    /**
-     * Registers the tokens that this sniff wants to listen for.
-     *
-     * @return array<int, int>
-     *
-     * @see    Tokens.php
-     */
-    public function register(): array
+    protected function processSingleLineArray(File $phpcsFile, int $stackPtr, int $arrayStart, int $arrayEnd, array $indices): void
     {
-        return $this->arrayTokens;
+        // nothing to do for single lines arrays
     }
 
     /**
-     * Processes this test, when one of its tokens is encountered.
+     * Processes a multi-line array definition.
      *
-     * @param File $phpcsFile The file being scanned.
-     * @param int  $stackPtr  The position of the current token in
-     *                        the stack passed in $tokens.
+     * @param File  $phpcsFile  The file being checked.
+     * @param int   $stackPtr   The position of the current token.
+     * @param int   $arrayStart The token that starts the array.
+     * @param int   $arrayEnd   The token that ends the array.
+     * @param array $indices    The array's keys, double arrows, and values.
+     *
+     * @phpcsSuppress SlevomatCodingStandard.Functions.UnusedParameter
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingTraversableTypeHintSpecification
      */
-    public function process(File $phpcsFile, int $stackPtr): void
+    protected function processMultiLineArray(File $phpcsFile, int $stackPtr, int $arrayStart, int $arrayEnd, array $indices): void
     {
-        $tokens  = $phpcsFile->getTokens();
-        $current = $tokens[$stackPtr];
-
-        // Determine array boundaries
-        if (T_ARRAY === $current['code']) {
-            $start = $current['parenthesis_opener'];
-            $end   = $current['parenthesis_closer'];
-        } else {
-            $start = $current['bracket_opener'];
-            $end   = $current['bracket_closer'];
-        }
-
-        // Skip single-line arrays
-        if ($tokens[$start]['line'] === $tokens[$end]['line']) {
-            return;
-        }
+        $tokens = $phpcsFile->getTokens();
 
         $assignments      = [];
         $keyEndColumn     = -1;
@@ -99,11 +74,11 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
         $assignmentsCount = 0;
         $previousComma    = false;
 
-        for ($i = ($start + 1); $i < $end; $i++) {
+        for ($i = ($arrayStart + 1); $i < $arrayEnd; $i++) {
             $current = $tokens[$i];
 
             // Skip nested arrays.
-            if (isset($this->arrayTokenLookup[$current['code']])) {
+            if (T_OPEN_SHORT_ARRAY === $current['code'] || T_ARRAY === $current['code']) {
                 $i = T_ARRAY === $current['code'] ? ($current['parenthesis_closer'] + 1) : ($current['bracket_closer'] + 1);
 
                 continue;
