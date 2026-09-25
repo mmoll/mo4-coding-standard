@@ -58,15 +58,14 @@ class MultiLineArraySniff implements Sniff
      * Processes this test, when one of its tokens is encountered.
      *
      * @param File $phpcsFile The file being scanned.
-     * @param int  $stackPtr  The position of the current token in
-     *                        the stack passed in $tokens.
-     *
+     * @param int  $stackPtr  The position of the current token in the stack.
      */
     public function process(File $phpcsFile, int $stackPtr): void
     {
         $tokens  = $phpcsFile->getTokens();
         $current = $tokens[$stackPtr];
 
+        // Determine array type and boundaries
         if (T_ARRAY === $current['code']) {
             $arrayType = 'parenthesis';
             $start     = $current['parenthesis_opener'];
@@ -79,10 +78,12 @@ class MultiLineArraySniff implements Sniff
 
         $openLine = $tokens[$start]['line'];
 
+        // Early return if single line array
         if ($openLine === $tokens[$end]['line']) {
             return;
         }
 
+        // Check opening delimiter spacing
         if ($tokens[($start + 2)]['line'] === $openLine) {
             $fixable = $phpcsFile->addFixableError(
                 \sprintf(
@@ -100,6 +101,7 @@ class MultiLineArraySniff implements Sniff
             }
         }
 
+        // Check closing delimiter spacing
         if ($tokens[($end - 2)]['line'] !== $tokens[$end]['line']) {
             return;
         }

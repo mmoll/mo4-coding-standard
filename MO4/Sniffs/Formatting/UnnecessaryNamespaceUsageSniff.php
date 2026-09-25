@@ -41,7 +41,6 @@ class UnnecessaryNamespaceUsageSniff implements Sniff
 {
     /**
      * Tokens used in full class name.
-     *
      */
     private const CLASS_NAME_TOKENS = [
         T_NAME_FULLY_QUALIFIED,

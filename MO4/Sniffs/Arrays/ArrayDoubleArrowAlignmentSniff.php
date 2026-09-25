@@ -73,13 +73,13 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
      * @param File $phpcsFile The file being scanned.
      * @param int  $stackPtr  The position of the current token in
      *                        the stack passed in $tokens.
-     *
      */
     public function process(File $phpcsFile, int $stackPtr): void
     {
         $tokens  = $phpcsFile->getTokens();
         $current = $tokens[$stackPtr];
 
+        // Determine array boundaries
         if (T_ARRAY === $current['code']) {
             $start = $current['parenthesis_opener'];
             $end   = $current['parenthesis_closer'];
@@ -88,6 +88,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $end   = $current['bracket_closer'];
         }
 
+        // Skip single-line arrays
         if ($tokens[$start]['line'] === $tokens[$end]['line']) {
             return;
         }
@@ -115,16 +116,19 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
                 continue;
             }
 
+            // Track commas
             if (T_COMMA === $current['code']) {
                 $previousComma = $i;
 
                 continue;
             }
 
+            // Only process double arrow assignments
             if (T_DOUBLE_ARROW !== $current['code']) {
                 continue;
             }
 
+            // Record assignment position
             $previous                       = $tokens[($i - 1)];
             $assignments[$assignmentsCount] = $i;
             $assignmentsCount++;
@@ -133,6 +137,7 @@ class ArrayDoubleArrowAlignmentSniff implements Sniff
             $column = $previous['column'];
             $line   = $current['line'];
 
+            // Check for multiple assignments per line
             if ($lastLine === $line) {
                 $msg = 'only one "=>" assignments per line is allowed in a multi line array';
 

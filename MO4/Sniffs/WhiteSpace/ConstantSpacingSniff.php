@@ -33,11 +33,11 @@ use PHP_CodeSniffer\Sniffs\Sniff;
 class ConstantSpacingSniff implements Sniff
 {
     /**
-     * Define all types of arrays.
+     * Define all types of constants.
      *
      * @var array
      */
-    protected array $arrayTokens = [
+    protected array $constantTokens = [
         T_CONST,
     ];
 
@@ -50,7 +50,7 @@ class ConstantSpacingSniff implements Sniff
      */
     public function register(): array
     {
-        return $this->arrayTokens;
+        return $this->constantTokens;
     }
 
     /**

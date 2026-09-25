@@ -19,7 +19,7 @@ use PHP_CodeSniffer\Files\File;
 use PHP_CodeSniffer\Sniffs\AbstractScopeSniff;
 
 /**
- * Property Comment Sniff sniff.
+ * Property Comment Sniff.
  *
  * Doc blocks of class properties must be multiline and have exactly one var
  * annotation.
@@ -68,7 +68,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
     ];
 
     /**
-     * Construct PropertyCommentSniff
+     * Constructor for PropertyCommentSniff.
      *
      * @throws RuntimeException
      */
@@ -115,8 +115,8 @@ class PropertyCommentSniff extends AbstractScopeSniff
         if (false !== $postComment
             && $tokens[$postComment]['line'] === $tokens[$stackPtr]['line']
         ) {
+            // Check for doc blocks after declarations
             if ('/**' === $tokens[$postComment]['content']) {
-                // That's an error already.
                 $phpcsFile->addError(
                     'no doc blocks are allowed directly after declaration',
                     $stackPtr,
@@ -182,6 +182,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
 
             $varCount = \preg_match_all('/\s+@var\s+/', $tokensAsString);
 
+            // Validate @var annotation count
             if ((0 === $varCount) || ($varCount > 1)) {
                 $phpcsFile->addError(
                     'property doc comment must have exactly one @var annotation',
@@ -190,6 +191,7 @@ class PropertyCommentSniff extends AbstractScopeSniff
                 );
             }
 
+            // Handle multiline docblock requirement
             if (1 === $varCount) {
                 if (true === $isCommentOneLiner) {
                     $fix = $phpcsFile->addFixableError(
